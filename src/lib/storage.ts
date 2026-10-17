@@ -87,8 +87,8 @@ export async function uploadFile(
 
         if (uploadRes.ok) {
           const fileData = await uploadRes.json();
-          // Public URL structure
-          const fileUrl = `${auth.downloadUrl}/file/${bucketName}/${fileData.fileName}`;
+          // Secure streaming URL via our proxy (keeps B2 bucket 100% Private & 100% Free!)
+          const fileUrl = `/api/media/${fileData.fileName}`;
           return { url: fileUrl, storageType: 'backblaze_b2' };
         } else {
           console.error('B2 upload call failed:', await uploadRes.text());
