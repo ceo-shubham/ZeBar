@@ -8,9 +8,9 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons & QRCode Library -->
+  <!-- Lucide Icons & Bundled QRCode Library -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="/qrcode.bundle.js"></script>
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -49,8 +49,8 @@
           <span class="w-[2.5px] bg-slate-900"></span>
         </div>
         <div class="flex items-baseline gap-1">
-          <span class="font-mono text-lg sm:text-xl font-black tracking-wider text-slate-900 leading-none">ZeBar</span>
-          <span class="hidden md:inline text-[10px] font-mono text-slate-500">by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-700">ZENSTRO</a></span>
+          <span class="font-mono text-base sm:text-xl font-black tracking-wider text-slate-900 leading-none">ZeBar</span>
+          <span class="text-[10px] sm:text-xs font-mono text-slate-500 whitespace-nowrap">by <span class="font-bold text-slate-900">ZENSTRO</span></span>
         </div>
       </a>
 
@@ -218,10 +218,18 @@
             </div>
           </div>
 
+          <!-- Explicit Action Button: Generate QR Code -->
+          <div class="pt-2 sm:pt-3 border-t border-slate-200">
+            <button type="button" onclick="renderQR(true)" id="btn-generate-qr" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm active:bg-black transition-all">
+              <i data-lucide="qr-code" class="w-4 h-4"></i>
+              <span id="btn-generate-text">Generate QR Code</span>
+            </button>
+          </div>
+
         </div>
 
         <!-- Preview Column -->
-        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 flex flex-col items-center shadow-sm">
+        <div id="preview-box" class="lg:col-span-5 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 flex flex-col items-center shadow-sm">
           
           <div class="w-full flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
             <span class="text-[11px] font-mono font-semibold uppercase text-slate-500">Live Preview</span>
@@ -230,10 +238,9 @@
             </span>
           </div>
 
-          <!-- QR Container: Canvas (in-memory) + Image (rock solid on mobile) -->
+          <!-- QR Code Canvas (Directly Visible, High-Res 320x320 internal, responsive CSS) -->
           <div class="p-3 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center justify-center w-full max-w-[280px]">
-            <canvas id="qr-canvas" width="320" height="320" class="hidden"></canvas>
-            <img id="qr-img" alt="QR Code" class="w-52 h-52 sm:w-56 sm:h-56 object-contain block mx-auto" />
+            <canvas id="qr-canvas" width="320" height="320" class="w-52 h-52 sm:w-56 sm:h-56 mx-auto block rounded"></canvas>
           </div>
 
           <!-- Target Preview -->
@@ -521,16 +528,14 @@
       return 'https://zenstro.space';
     }
 
-    // Bulletproof QR render: Canvas in-memory + img tag for flawless mobile display
-    function renderQR() {
+    function renderQR(scrollToPreview = false) {
       if (typeof QRCode === 'undefined') {
-        setTimeout(renderQR, 40);
+        setTimeout(() => renderQR(scrollToPreview), 30);
         return;
       }
 
       const canvas = document.getElementById('qr-canvas');
-      const img = document.getElementById('qr-img');
-      if (!canvas || !img) return;
+      if (!canvas) return;
 
       const targetText = getTarget();
       const previewText = document.getElementById('qr-target-preview');
@@ -542,6 +547,13 @@
       const bgLabel = document.getElementById('qr-bg-label');
       if (fgLabel) fgLabel.innerText = fg;
       if (bgLabel) bgLabel.innerText = bg;
+
+      // Button feedback if user clicked Generate
+      const btnText = document.getElementById('btn-generate-text');
+      if (scrollToPreview && btnText) {
+        btnText.innerText = 'Generated!';
+        setTimeout(() => { if (btnText) btnText.innerText = 'Generate QR Code'; }, 1500);
+      }
 
       QRCode.toCanvas(canvas, targetText, {
         width: 320,
@@ -578,10 +590,14 @@
             ctx.drawImage(logo, x, y, size, size);
             ctx.restore();
 
-            img.src = canvas.toDataURL('image/png');
+            if (scrollToPreview && window.innerWidth < 1024) {
+              document.getElementById('preview-box')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
           };
         } else {
-          img.src = canvas.toDataURL('image/png');
+          if (scrollToPreview && window.innerWidth < 1024) {
+            document.getElementById('preview-box')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
         }
       });
     }
