@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>ZeBar | QR Code Studio by ZENSTRO</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -23,7 +23,7 @@
     .barcode-lines {
       display: inline-flex;
       align-items: stretch;
-      height: 22px;
+      height: 20px;
       gap: 2px;
     }
   </style>
@@ -31,61 +31,62 @@
 <body class="min-h-screen flex flex-col justify-between bg-white text-slate-900 antialiased selection:bg-slate-200">
 
   <!-- ============================================================== -->
-  <!-- NAVBAR -->
+  <!-- NAVBAR (MOBILE OPTIMIZED) -->
   <!-- ============================================================== -->
-  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
       
-      <!-- Typographic Barcode Brand (NO BOX) -->
-      <a href="#" onclick="showView('studio')" class="flex items-center gap-2.5 select-none cursor-pointer">
-        <!-- Pure Barcode Stripes -->
+      <!-- Brand: Barcode + ZeBar -->
+      <a href="#" onclick="showView('studio')" class="flex items-center gap-1.5 sm:gap-2 select-none cursor-pointer shrink-0">
         <div class="barcode-lines text-slate-900" aria-hidden="true">
-          <span class="w-[3px] bg-slate-900"></span>
-          <span class="w-[1px] bg-slate-900"></span>
-          <span class="w-[4px] bg-slate-900"></span>
-          <span class="w-[1px] bg-slate-900"></span>
-          <span class="w-[2px] bg-slate-900"></span>
-          <span class="w-[5px] bg-slate-900"></span>
+          <span class="w-[2.5px] bg-slate-900"></span>
           <span class="w-[1px] bg-slate-900"></span>
           <span class="w-[3px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
           <span class="w-[2px] bg-slate-900"></span>
           <span class="w-[4px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[2.5px] bg-slate-900"></span>
         </div>
-        <div class="flex items-baseline gap-1.5">
-          <span class="font-mono text-xl font-extrabold tracking-wider text-slate-900">ZeBar</span>
-          <span class="text-[10px] font-mono text-slate-500">by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-700">ZENSTRO</a></span>
+        <div class="flex items-baseline gap-1">
+          <span class="font-mono text-lg sm:text-xl font-black tracking-wider text-slate-900 leading-none">ZeBar</span>
+          <span class="hidden md:inline text-[10px] font-mono text-slate-500">by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-700">ZENSTRO</a></span>
         </div>
       </a>
 
-      <!-- Quick Nav -->
-      <nav class="flex items-center gap-2 sm:gap-3">
-        <button onclick="showView('studio')" class="px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
-          Studio
-        </button>
-        <button onclick="showView('dashboard')" class="px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
-          History
-        </button>
-        <a href="/terms" class="hidden sm:inline-block px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
+      <!-- Quick Nav Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Segmented Tab for Studio / History -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded border border-slate-200 text-xs">
+          <button onclick="showView('studio')" id="nav-btn-studio" class="px-2.5 py-1 rounded font-medium bg-white text-slate-900 shadow-sm text-xs transition-all">
+            Studio
+          </button>
+          <button onclick="showView('dashboard')" id="nav-btn-dashboard" class="px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900 text-xs transition-all">
+            History
+          </button>
+        </div>
+
+        <a href="/terms" class="hidden lg:inline-block px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 rounded">
           Terms
         </a>
-        <a href="/privacy" class="hidden sm:inline-block px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
+        <a href="/privacy" class="hidden lg:inline-block px-2 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 rounded">
           Privacy
         </a>
 
         <!-- VIP Button (for CEO) -->
-        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 rounded hover:bg-amber-100">
+        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1 px-2 py-1 text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 rounded hover:bg-amber-100">
           <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-700"></i>
-          <span>VIP Panel</span>
+          <span class="hidden sm:inline">VIP</span>
         </button>
 
         <!-- Auth Button -->
-        <div id="auth-container">
-          <button onclick="openLoginModal()" class="px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5">
+        <div id="auth-container" class="shrink-0">
+          <button onclick="openLoginModal()" class="px-2.5 sm:px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1 shadow-sm whitespace-nowrap">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span>Sign In</span>
           </button>
         </div>
-      </nav>
+      </div>
 
     </div>
   </header>
@@ -93,42 +94,42 @@
   <!-- ============================================================== -->
   <!-- MAIN WORKSPACE -->
   <!-- ============================================================== -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  <main class="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8">
 
-    <!-- VIEW 1: QR STUDIO (Front & Center) -->
-    <section id="view-studio" class="space-y-6">
+    <!-- VIEW 1: QR STUDIO -->
+    <section id="view-studio" class="space-y-4 sm:space-y-6">
       
       <!-- Studio Header -->
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2 sm:pb-3">
         <div>
-          <h1 class="text-lg font-bold text-slate-900">QR Code Studio</h1>
-          <p class="text-xs text-slate-500">Generate camera-ready QR codes for links, text, audio, and images.</p>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900">QR Code Studio</h1>
+          <p class="text-xs text-slate-500">Camera-ready QR codes for links, text, audio, and images.</p>
         </div>
       </div>
 
-      <!-- Studio Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Studio Grid: 2 columns on desktop, clean single-column on mobile -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         
         <!-- Controls Column -->
-        <div class="lg:col-span-7 bg-white border border-slate-200 rounded p-5 space-y-5">
+        <div class="lg:col-span-7 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 space-y-4 sm:space-y-5 shadow-sm">
           
           <!-- Content Type Selector -->
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Content Type</label>
-            <div class="grid grid-cols-4 gap-1.5 bg-slate-100 p-1 rounded">
-              <button onclick="setTab('url')" id="tab-url" class="py-1.5 px-2 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1">
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Content Type</label>
+            <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded border border-slate-200">
+              <button onclick="setTab('url')" id="tab-url" class="py-1.5 px-1 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1 transition-all">
                 <i data-lucide="link" class="w-3.5 h-3.5"></i>
                 <span>Link</span>
               </button>
-              <button onclick="setTab('text')" id="tab-text" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+              <button onclick="setTab('text')" id="tab-text" class="py-1.5 px-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition-all">
                 <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
                 <span>Text</span>
               </button>
-              <button onclick="setTab('mp3')" id="tab-mp3" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+              <button onclick="setTab('mp3')" id="tab-mp3" class="py-1.5 px-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition-all">
                 <i data-lucide="music" class="w-3.5 h-3.5"></i>
                 <span>MP3</span>
               </button>
-              <button onclick="setTab('image')" id="tab-image" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+              <button onclick="setTab('image')" id="tab-image" class="py-1.5 px-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition-all">
                 <i data-lucide="image" class="w-3.5 h-3.5"></i>
                 <span>Image</span>
               </button>
@@ -149,7 +150,7 @@
 
           <!-- Tab: Text -->
           <div id="input-group-text" class="hidden">
-            <label class="block text-xs font-medium text-slate-700 mb-1">Text Content</label>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Text Message</label>
             <textarea id="qr-text" rows="3" placeholder="Enter message..." oninput="renderQR()" class="w-full px-3 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900">Welcome to ZeBar by ZENSTRO</textarea>
           </div>
 
@@ -174,33 +175,33 @@
           </div>
 
           <!-- Center Logo Section (MANDATORY LOGIN) -->
-          <div class="pt-4 border-t border-slate-200 space-y-2">
+          <div class="pt-3 sm:pt-4 border-t border-slate-200 space-y-2">
             <div class="flex items-center justify-between">
               <label class="text-xs font-semibold text-slate-800">Center Brand Logo</label>
               <button type="button" id="btn-remove-logo" onclick="removeCenterLogo()" class="hidden text-xs text-red-600 hover:underline">Remove logo</button>
             </div>
 
             <!-- Notice: Login Mandatory for Logo -->
-            <div id="logo-auth-notice" class="p-2.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-start gap-2">
-              <i data-lucide="lock" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
-              <div>
+            <div id="logo-auth-notice" class="p-2 sm:p-2.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-start gap-2">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5"></i>
+              <div class="text-[11px] sm:text-xs leading-snug">
                 <span class="font-semibold">Login is mandatory to add a logo.</span>
-                <p class="text-[11px] text-amber-800 mt-0.5">Sign in with Google to upload and embed your brand logo into the center of the QR code.</p>
+                <span class="text-amber-800"> Sign in with Google to upload and embed your brand logo into the center of the QR code.</span>
               </div>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
               <input type="file" id="file-center-logo" accept="image/*" onchange="handleCenterLogo(event)" class="hidden" />
-              <button type="button" id="btn-upload-logo" onclick="triggerLogoUpload()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded flex items-center gap-1.5">
+              <button type="button" id="btn-upload-logo" onclick="triggerLogoUpload()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded flex items-center gap-1.5 shadow-sm active:bg-black">
                 <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
                 <span id="center-logo-btn-text">Upload Logo</span>
               </button>
-              <span id="center-logo-name" class="text-xs font-mono text-slate-600 truncate max-w-[200px]"></span>
+              <span id="center-logo-name" class="text-xs font-mono text-slate-600 truncate max-w-[180px]"></span>
             </div>
           </div>
 
           <!-- Color Customization -->
-          <div class="pt-4 border-t border-slate-200 grid grid-cols-2 gap-4">
+          <div class="pt-3 sm:pt-4 border-t border-slate-200 grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-600 mb-1">Pattern Color</label>
               <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded border border-slate-200">
@@ -220,39 +221,46 @@
         </div>
 
         <!-- Preview Column -->
-        <div class="lg:col-span-5 bg-white border border-slate-200 rounded p-5 flex flex-col items-center">
-          <div class="text-[11px] font-mono font-medium uppercase text-slate-500 mb-3">Live Preview</div>
-
-          <!-- Canvas -->
-          <div class="p-3 bg-white border border-slate-200 rounded shadow-sm flex items-center justify-center">
-            <canvas id="qr-canvas" class="max-w-[240px] h-auto"></canvas>
+        <div class="lg:col-span-5 bg-white border border-slate-200 rounded-lg p-3.5 sm:p-5 flex flex-col items-center shadow-sm">
+          
+          <div class="w-full flex items-center justify-between pb-2 mb-3 border-b border-slate-100">
+            <span class="text-[11px] font-mono font-semibold uppercase text-slate-500">Live Preview</span>
+            <span class="text-[10px] text-emerald-600 font-mono font-medium flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Camera-Ready
+            </span>
           </div>
 
-          <!-- Target preview -->
+          <!-- QR Container: Canvas (in-memory) + Image (rock solid on mobile) -->
+          <div class="p-3 bg-white border border-slate-200 rounded-lg shadow-sm flex items-center justify-center w-full max-w-[280px]">
+            <canvas id="qr-canvas" width="320" height="320" class="hidden"></canvas>
+            <img id="qr-img" alt="QR Code" class="w-52 h-52 sm:w-56 sm:h-56 object-contain block mx-auto" />
+          </div>
+
+          <!-- Target Preview -->
           <div class="w-full mt-3 p-2 bg-slate-50 border border-slate-200 rounded text-center">
             <p class="text-[10px] text-slate-500 font-mono uppercase">Target Destination</p>
-            <p id="qr-target-preview" class="text-xs font-mono text-slate-900 truncate max-w-[240px] mx-auto mt-0.5">https://zenstro.space</p>
+            <p id="qr-target-preview" class="text-xs font-mono text-slate-900 truncate max-w-[260px] mx-auto mt-0.5 font-medium">https://zenstro.space</p>
           </div>
 
           <!-- Actions -->
-          <div class="w-full grid grid-cols-2 gap-2 mt-4">
-            <button type="button" onclick="downloadPNG()" class="py-2 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5">
+          <div class="w-full grid grid-cols-2 gap-2 mt-3">
+            <button type="button" onclick="downloadPNG()" class="py-2 px-2.5 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5 shadow-sm active:bg-slate-100">
               <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
               <span>Download PNG</span>
             </button>
-            <button type="button" onclick="downloadSVG()" class="py-2 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5">
+            <button type="button" onclick="downloadSVG()" class="py-2 px-2.5 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5 shadow-sm active:bg-slate-100">
               <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
               <span>Download SVG</span>
             </button>
           </div>
 
-          <button type="button" onclick="saveToDashboard()" class="w-full mt-2 py-2 rounded font-medium text-xs bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-1.5">
+          <button type="button" onclick="saveToDashboard()" class="w-full mt-2 py-2.5 rounded font-medium text-xs bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-1.5 shadow-sm active:bg-black">
             <i data-lucide="save" class="w-3.5 h-3.5"></i>
             <span>Save to History</span>
           </button>
 
-          <p class="text-[10px] text-slate-400 text-center mt-3">
-            Ad-free platform. Records retained securely for safety compliance.
+          <p class="text-[10px] text-slate-400 text-center mt-2.5">
+            Ad-free. Stored securely on private cloud storage.
           </p>
         </div>
 
@@ -261,10 +269,10 @@
     </section>
 
     <!-- VIEW 2: HISTORY / DASHBOARD -->
-    <section id="view-dashboard" class="hidden space-y-6">
+    <section id="view-dashboard" class="hidden space-y-4 sm:space-y-6">
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
         <div>
-          <h2 class="text-lg font-bold text-slate-900">QR Code History</h2>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">QR Code History</h2>
           <p class="text-xs text-slate-500">Your saved QR codes.</p>
         </div>
         <button onclick="showView('studio')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-medium flex items-center gap-1">
@@ -273,52 +281,52 @@
         </button>
       </div>
 
-      <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <!-- Rendered items -->
       </div>
     </section>
 
     <!-- VIEW 3: VIP AUDIT PANEL (EXCLUSIVELY CEO) -->
-    <section id="view-vip" class="hidden space-y-6">
-      <div class="bg-slate-50 border border-slate-200 rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <section id="view-vip" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200 mb-1">EXECUTIVE AUDIT</span>
-          <h2 class="text-xl font-bold text-slate-900">Welcome, Shubham Pathak</h2>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900">Welcome, Shubham Pathak</h2>
           <p class="text-xs text-slate-600">Audit user first-time logins and inspect creation histories.</p>
         </div>
         <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-medium rounded text-xs flex items-center gap-1 self-start sm:self-auto">
           <span>zenstro.space</span>
-          <i data-lucide="external-link" class="w-3 h-3 text-slate-500"></i>
+          <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
         </a>
       </div>
 
       <!-- Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
         <div class="bg-white border border-slate-200 rounded p-3">
           <p class="text-xs text-slate-500">Users</p>
-          <p id="vip-stat-users" class="text-xl font-bold text-slate-900 mt-0.5">1</p>
+          <p id="vip-stat-users" class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">1</p>
         </div>
         <div class="bg-white border border-slate-200 rounded p-3">
           <p class="text-xs text-slate-500">Total QRs</p>
-          <p id="vip-stat-qrs" class="text-xl font-bold text-slate-900 mt-0.5">0</p>
+          <p id="vip-stat-qrs" class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">0</p>
         </div>
         <div class="bg-white border border-slate-200 rounded p-3">
           <p class="text-xs text-slate-500">Storage</p>
-          <p class="text-sm font-bold text-slate-900 mt-1 truncate">Backblaze B2</p>
+          <p class="text-xs sm:text-sm font-bold text-slate-900 mt-1 truncate">Backblaze B2</p>
         </div>
         <div class="bg-white border border-slate-200 rounded p-3">
           <p class="text-xs text-slate-500">Ads</p>
-          <p class="text-xl font-bold text-slate-900 mt-0.5">0</p>
+          <p class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">0</p>
         </div>
       </div>
 
       <!-- Users Feed & Search -->
-      <div class="bg-white border border-slate-200 rounded p-4 space-y-3">
+      <div class="bg-white border border-slate-200 rounded-lg p-3.5 sm:p-4 space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 class="text-sm font-bold text-slate-900">User Registry & First-Time Login Feed</h3>
           <div class="relative sm:w-72">
-            <input type="text" id="vip-search-input" oninput="filterVipUsers()" placeholder="Search user email..." class="w-full px-3 py-1 pl-8 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1.5"></i>
+            <input type="text" id="vip-search-input" oninput="filterVipUsers()" placeholder="Search user email..." class="w-full px-3 py-1.5 pl-8 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2"></i>
           </div>
         </div>
 
@@ -347,7 +355,7 @@
   <!-- MODAL: SIGN IN -->
   <!-- ============================================================== -->
   <div id="modal-login" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded p-6 max-w-sm w-full shadow-lg relative">
+    <div class="bg-white border border-slate-200 rounded-lg p-5 sm:p-6 max-w-sm w-full shadow-lg relative">
       <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-800 p-1">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
@@ -355,14 +363,14 @@
       <div class="text-center mb-5">
         <!-- Barcode Brand in Modal -->
         <div class="barcode-lines text-slate-900 mb-2" aria-hidden="true">
+          <span class="w-[2.5px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
           <span class="w-[3px] bg-slate-900"></span>
           <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[2px] bg-slate-900"></span>
           <span class="w-[4px] bg-slate-900"></span>
           <span class="w-[1px] bg-slate-900"></span>
-          <span class="w-[2px] bg-slate-900"></span>
-          <span class="w-[5px] bg-slate-900"></span>
-          <span class="w-[2px] bg-slate-900"></span>
-          <span class="w-[3px] bg-slate-900"></span>
+          <span class="w-[2.5px] bg-slate-900"></span>
         </div>
         <h3 class="text-base font-bold text-slate-900">Sign In to ZeBar</h3>
         <p id="login-modal-subtitle" class="text-xs text-slate-500 mt-1">
@@ -385,7 +393,7 @@
         </div>
 
         <!-- 1-Click CEO Shubham Login -->
-        <button onclick="instantLogin('ceo.shubhampathak@gmail.com', 'Shubham Pathak')" class="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-xs flex items-center justify-center gap-2">
+        <button onclick="instantLogin('ceo.shubhampathak@gmail.com', 'Shubham Pathak')" class="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-xs flex items-center justify-center gap-2 shadow-sm">
           <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-300"></i>
           <span>Sign In as CEO (Shubham Pathak - VIP Owner)</span>
         </button>
@@ -404,19 +412,19 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- FOOTER -->
+  <!-- FOOTER (MOBILE OPTIMIZED) -->
   <!-- ============================================================== -->
-  <footer class="bg-white border-t border-slate-200 text-slate-500 py-6 text-xs">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-slate-900">ZeBar</span>
-        <span>by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="text-slate-800 hover:underline font-medium">ZENSTRO</a></span>
-        <span class="text-slate-300">|</span>
-        <span>Founder & CEO: Shubham Pathak (<span class="font-mono text-slate-700">ceo.shubhampathak@gmail.com</span>)</span>
+  <footer class="bg-white border-t border-slate-200 text-slate-500 py-6 text-xs mt-8 sm:mt-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div>
+        <span class="font-bold text-slate-900">ZeBar</span> by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="text-slate-800 hover:underline font-medium">ZENSTRO</a>
+        <span class="block sm:inline text-slate-400 sm:before:content-['|'] sm:before:mx-2">Founder & CEO: Shubham Pathak</span>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex flex-wrap items-center justify-center gap-3 text-[11px] sm:text-xs">
         <a href="/terms" class="hover:text-slate-900">Terms of Service</a>
+        <span>•</span>
         <a href="/privacy" class="hover:text-slate-900">Privacy Policy</a>
+        <span>•</span>
         <span>© 2026 ZENSTRO. Zero Ads.</span>
       </div>
     </div>
@@ -470,6 +478,22 @@
         window.scrollTo({ top: 0, behavior: 'instant' });
       }
 
+      // Update Nav buttons styling
+      const btnStudio = document.getElementById('nav-btn-studio');
+      const btnDash = document.getElementById('nav-btn-dashboard');
+      if (btnStudio && btnDash) {
+        if (viewId === 'studio') {
+          btnStudio.className = 'px-2.5 py-1 rounded font-medium bg-white text-slate-900 shadow-sm text-xs transition-all';
+          btnDash.className = 'px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900 text-xs transition-all';
+        } else if (viewId === 'dashboard') {
+          btnDash.className = 'px-2.5 py-1 rounded font-medium bg-white text-slate-900 shadow-sm text-xs transition-all';
+          btnStudio.className = 'px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900 text-xs transition-all';
+        } else {
+          btnStudio.className = 'px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900 text-xs transition-all';
+          btnDash.className = 'px-2.5 py-1 rounded font-medium text-slate-600 hover:text-slate-900 text-xs transition-all';
+        }
+      }
+
       if (viewId === 'studio') renderQR();
       if (viewId === 'dashboard') renderDashboard();
       if (viewId === 'vip') renderVipUsers();
@@ -482,10 +506,10 @@
         const btn = document.getElementById('tab-' + t);
         const inputGrp = document.getElementById('input-group-' + t);
         if (t === tab) {
-          btn.className = 'py-1.5 px-2 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1';
+          btn.className = 'py-1.5 px-1 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1 transition-all';
           inputGrp.classList.remove('hidden');
         } else {
-          btn.className = 'py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1';
+          btn.className = 'py-1.5 px-1 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition-all';
           inputGrp.classList.add('hidden');
         }
       });
@@ -503,18 +527,27 @@
       return 'https://zenstro.space';
     }
 
+    // Bulletproof QR render: Canvas in-memory + img tag for flawless mobile display
     function renderQR() {
+      if (typeof QRCode === 'undefined') {
+        setTimeout(renderQR, 40);
+        return;
+      }
+
       const canvas = document.getElementById('qr-canvas');
-      if (!canvas) return;
+      const img = document.getElementById('qr-img');
+      if (!canvas || !img) return;
 
       const targetText = getTarget();
       const previewText = document.getElementById('qr-target-preview');
       if (previewText) previewText.innerText = targetText;
 
-      const fg = document.getElementById('qr-fg').value;
-      const bg = document.getElementById('qr-bg').value;
-      document.getElementById('qr-fg-label').innerText = fg;
-      document.getElementById('qr-bg-label').innerText = bg;
+      const fg = document.getElementById('qr-fg')?.value || '#0f172a';
+      const bg = document.getElementById('qr-bg')?.value || '#ffffff';
+      const fgLabel = document.getElementById('qr-fg-label');
+      const bgLabel = document.getElementById('qr-bg-label');
+      if (fgLabel) fgLabel.innerText = fg;
+      if (bgLabel) bgLabel.innerText = bg;
 
       QRCode.toCanvas(canvas, targetText, {
         width: 320,
@@ -522,7 +555,10 @@
         color: { dark: fg, light: bg },
         errorCorrectionLevel: centerLogoData ? 'H' : 'M'
       }, function (error) {
-        if (error) console.error(error);
+        if (error) {
+          console.error('QR Render Error:', error);
+          return;
+        }
 
         if (centerLogoData) {
           const ctx = canvas.getContext('2d');
@@ -547,7 +583,11 @@
             ctx.clip();
             ctx.drawImage(logo, x, y, size, size);
             ctx.restore();
+
+            img.src = canvas.toDataURL('image/png');
           };
+        } else {
+          img.src = canvas.toDataURL('image/png');
         }
       });
     }
@@ -631,8 +671,8 @@
     function downloadSVG() {
       const target = getTarget();
       const title = document.getElementById('qr-title').value || 'ZeBar-QR';
-      const fg = document.getElementById('qr-fg').value;
-      const bg = document.getElementById('qr-bg').value;
+      const fg = document.getElementById('qr-fg')?.value || '#0f172a';
+      const bg = document.getElementById('qr-bg')?.value || '#ffffff';
 
       QRCode.toString(target, {
         type: 'svg',
@@ -690,7 +730,7 @@
 
       if (myQRs.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full text-center py-12 bg-slate-50 rounded border border-slate-200">
+          <div class="col-span-full text-center py-10 bg-slate-50 rounded border border-slate-200">
             <p class="text-xs font-semibold text-slate-800">No QR codes saved yet</p>
             <p class="text-[11px] text-slate-500 mt-1">Generate your first QR code in the studio.</p>
             <button onclick="showView('studio')" class="mt-3 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-medium">Open Studio</button>
@@ -700,7 +740,7 @@
       }
 
       grid.innerHTML = myQRs.map(item => `
-        <div class="bg-white rounded p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="bg-white rounded-lg p-3.5 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
               <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">${item.type}</span>
@@ -840,15 +880,14 @@
           vipNavBtn.classList.add('hidden');
         }
 
-        // Hide mandatory login notice if already logged in
         if (logoNotice) logoNotice.classList.add('hidden');
 
         container.innerHTML = `
-          <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
-            <div class="w-6 h-6 rounded bg-slate-900 text-white flex items-center justify-center text-xs font-semibold">
+          <div class="flex items-center gap-1.5 pl-1.5 border-l border-slate-200">
+            <div class="w-6 h-6 rounded bg-slate-900 text-white flex items-center justify-center text-xs font-semibold shrink-0">
               ${currentUser.name.charAt(0)}
             </div>
-            <span class="text-xs font-medium text-slate-900 hidden sm:inline">${currentUser.name}</span>
+            <span class="text-xs font-medium text-slate-900 hidden sm:inline max-w-[80px] truncate">${currentUser.name}</span>
             <button onclick="logout()" title="Logout" class="p-1 text-slate-400 hover:text-slate-800 rounded">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
             </button>
@@ -859,7 +898,7 @@
         if (logoNotice) logoNotice.classList.remove('hidden');
 
         container.innerHTML = `
-          <button onclick="openLoginModal()" class="px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5">
+          <button onclick="openLoginModal()" class="px-2.5 sm:px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1 shadow-sm whitespace-nowrap">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span>Sign In</span>
           </button>
