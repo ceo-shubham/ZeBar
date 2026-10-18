@@ -378,31 +378,20 @@
         </p>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-4">
         <!-- Google Sign-In Container -->
         <div id="g_id_onload"
              data-client_id="193810371236-fm17kuegjb2fgoquu08brnsqne4tsj85.apps.googleusercontent.com"
              data-callback="handleGoogleCredential"
              data-auto_prompt="false">
         </div>
-        <div class="g_id_signin flex justify-center" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
+        <div class="g_id_signin flex justify-center py-2" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with" data-shape="rectangular" data-width="260"></div>
 
-        <div class="relative py-1">
-          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
-          <div class="relative flex justify-center text-[10px] uppercase font-mono"><span class="bg-white px-2 text-slate-400">Quick Access</span></div>
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded text-center">
+          <p class="text-[11px] text-slate-600 leading-snug">
+            Sign in with your Google account. VIP administrator privileges are granted exclusively to <span class="font-mono font-semibold text-slate-900">ceo.shubhampathak@gmail.com</span>.
+          </p>
         </div>
-
-        <!-- 1-Click CEO Shubham Login -->
-        <button onclick="instantLogin('ceo.shubhampathak@gmail.com', 'Shubham Pathak')" class="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-xs flex items-center justify-center gap-2 shadow-sm">
-          <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-300"></i>
-          <span>Sign In as CEO (Shubham Pathak - VIP Owner)</span>
-        </button>
-
-        <!-- 1-Click Test User Login -->
-        <button onclick="instantLogin('creator@zenstro.space', 'Alex Creator')" class="w-full py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-medium rounded text-xs flex items-center justify-center gap-1.5">
-          <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-600"></i>
-          <span>Sign In as Test User</span>
-        </button>
       </div>
 
       <p class="text-[10px] text-slate-400 text-center mt-4">
@@ -443,7 +432,12 @@
 
     function initApp() {
       const storedUser = localStorage.getItem('zebar_user');
-      if (storedUser) currentUser = JSON.parse(storedUser);
+      if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        // Strict runtime re-verification of VIP role
+        const isOwner = currentUser && (currentUser.email || '').toLowerCase().trim() === 'ceo.shubhampathak@gmail.com';
+        currentUser.role = isOwner ? 'VIP_OWNER' : 'USER';
+      }
 
       const storedQRs = localStorage.getItem('zebar_qrs');
       userQRs = storedQRs ? JSON.parse(storedQRs) : [];
@@ -467,6 +461,15 @@
     }
 
     function showView(viewId) {
+      // Guard VIP access strictly
+      if (viewId === 'vip') {
+        const isOwner = currentUser && (currentUser.email || '').toLowerCase().trim() === 'ceo.shubhampathak@gmail.com';
+        if (!isOwner) {
+          alert('Access Denied: The VIP Executive Panel is strictly reserved for ceo.shubhampathak@gmail.com.');
+          return;
+        }
+      }
+
       ['studio', 'dashboard', 'vip'].forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.classList.add('hidden');
@@ -825,44 +828,50 @@
       document.getElementById('modal-login').classList.add('hidden');
     }
 
-    function instantLogin(email, name) {
-      const isOwner = email.toLowerCase() === 'ceo.shubhampathak@gmail.com';
-      currentUser = {
-        email: email,
-        name: name,
-        role: isOwner ? 'VIP_OWNER' : 'USER'
-      };
-      localStorage.setItem('zebar_user', JSON.stringify(currentUser));
-
-      let u = registeredUsers.find(x => x.email.toLowerCase() === email.toLowerCase());
-      if (!u) {
-        u = {
-          email: email,
-          name: name,
-          firstLoginAt: new Date().toISOString(),
-          qrCount: 0,
-          role: isOwner ? 'VIP_OWNER' : 'USER'
-        };
-        registeredUsers.unshift(u);
-        localStorage.setItem('zebar_registered_users', JSON.stringify(registeredUsers));
-      }
-
-      closeLoginModal();
-      updateAuthUI();
-
-      if (isOwner) {
-        showView('vip');
-      } else {
-        showView('studio');
-      }
-    }
-
     function handleGoogleCredential(response) {
       try {
         const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        instantLogin(payload.email, payload.name || payload.email.split('@')[0]);
+        const email = (payload.email || '').toLowerCase().trim();
+        const name = payload.name || payload.email.split('@')[0];
+
+        // STRICT VIP CHECK: Only and exclusively ceo.shubhampathak@gmail.com
+        const isOwner = email === 'ceo.shubhampathak@gmail.com';
+
+        currentUser = {
+          email: email,
+          name: name,
+          picture: payload.picture || '',
+          role: isOwner ? 'VIP_OWNER' : 'USER'
+        };
+        localStorage.setItem('zebar_user', JSON.stringify(currentUser));
+
+        // Update or register user
+        let u = registeredUsers.find(x => x.email.toLowerCase() === email);
+        if (!u) {
+          u = {
+            email: email,
+            name: name,
+            firstLoginAt: new Date().toISOString(),
+            qrCount: 0,
+            role: isOwner ? 'VIP_OWNER' : 'USER'
+          };
+          registeredUsers.unshift(u);
+        } else {
+          u.role = isOwner ? 'VIP_OWNER' : 'USER';
+        }
+        localStorage.setItem('zebar_registered_users', JSON.stringify(registeredUsers));
+
+        closeLoginModal();
+        updateAuthUI();
+
+        if (isOwner) {
+          showView('vip');
+        } else {
+          showView('studio');
+        }
       } catch (err) {
         console.error('Google token decode error:', err);
+        alert('Google authentication failed. Please try again.');
       }
     }
 
@@ -872,7 +881,7 @@
       const logoNotice = document.getElementById('logo-auth-notice');
 
       if (currentUser) {
-        const isOwner = currentUser.role === 'VIP_OWNER';
+        const isOwner = (currentUser.email || '').toLowerCase().trim() === 'ceo.shubhampathak@gmail.com';
         if (isOwner) {
           vipNavBtn.classList.remove('hidden');
           vipNavBtn.classList.add('inline-flex');
