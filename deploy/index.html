@@ -73,10 +73,10 @@
           Privacy
         </a>
 
-        <!-- VIP Button (for CEO) -->
-        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1 px-2 py-1 text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 rounded hover:bg-amber-100">
-          <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-700"></i>
-          <span class="hidden sm:inline">VIP</span>
+        <!-- Console Button (authorized only) -->
+        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1 px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-800 rounded border border-slate-200">
+          <i data-lucide="shield" class="w-3.5 h-3.5 text-slate-600"></i>
+          <span>Console</span>
         </button>
 
         <!-- Auth Button -->
@@ -286,13 +286,13 @@
       </div>
     </section>
 
-    <!-- VIEW 3: VIP AUDIT PANEL (EXCLUSIVELY CEO) -->
+    <!-- VIEW 3: SYSTEM CONSOLE (AUTHORIZED ONLY) -->
     <section id="view-vip" class="hidden space-y-4 sm:space-y-6">
       <div class="bg-slate-50 border border-slate-200 rounded-lg p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200 mb-1">EXECUTIVE AUDIT</span>
-          <h2 class="text-lg sm:text-xl font-bold text-slate-900">Welcome, Shubham Pathak</h2>
-          <p class="text-xs text-slate-600">Audit user first-time logins and inspect creation histories.</p>
+          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-200 text-slate-800 mb-1">SYSTEM OVERVIEW</span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900">Console Overview</h2>
+          <p class="text-xs text-slate-600">Platform statistics and user activity feed.</p>
         </div>
         <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-medium rounded text-xs flex items-center gap-1 self-start sm:self-auto">
           <span>zenstro.space</span>
@@ -389,7 +389,7 @@
 
         <div class="p-3 bg-slate-50 border border-slate-200 rounded text-center">
           <p class="text-[11px] text-slate-600 leading-snug">
-            Sign in with your Google account. VIP administrator privileges are granted exclusively to <span class="font-mono font-semibold text-slate-900">ceo.shubhampathak@gmail.com</span>.
+            Sign in securely with your Google account to create, host, and manage your QR codes.
           </p>
         </div>
       </div>
@@ -436,22 +436,14 @@
         currentUser = JSON.parse(storedUser);
         // Strict runtime re-verification of VIP role
         const isOwner = currentUser && (currentUser.email || '').toLowerCase().trim() === 'ceo.shubhampathak@gmail.com';
-        currentUser.role = isOwner ? 'VIP_OWNER' : 'USER';
+        currentUser.role = isOwner ? 'ADMIN' : 'USER';
       }
 
       const storedQRs = localStorage.getItem('zebar_qrs');
       userQRs = storedQRs ? JSON.parse(storedQRs) : [];
 
       const storedUsers = localStorage.getItem('zebar_registered_users');
-      registeredUsers = storedUsers ? JSON.parse(storedUsers) : [
-        {
-          email: 'ceo.shubhampathak@gmail.com',
-          name: 'Shubham Pathak',
-          firstLoginAt: '2026-10-18T04:30:00.000Z',
-          qrCount: 1,
-          role: 'VIP_OWNER'
-        }
-      ];
+      registeredUsers = storedUsers ? JSON.parse(storedUsers) : [];
 
       updateAuthUI();
       renderQR();
@@ -461,11 +453,10 @@
     }
 
     function showView(viewId) {
-      // Guard VIP access strictly
       if (viewId === 'vip') {
         const isOwner = currentUser && (currentUser.email || '').toLowerCase().trim() === 'ceo.shubhampathak@gmail.com';
         if (!isOwner) {
-          alert('Access Denied: The VIP Executive Panel is strictly reserved for ceo.shubhampathak@gmail.com.');
+          alert('Access denied.');
           return;
         }
       }
@@ -791,7 +782,7 @@
       table.innerHTML = filtered.map(u => `
         <tr class="hover:bg-slate-50">
           <td class="py-2 px-3 font-medium text-slate-900">
-            ${u.name} ${u.role === 'VIP_OWNER' ? '<span class="ml-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200">OWNER</span>' : ''}
+            ${u.name} ${u.role === 'ADMIN' ? '<span class="ml-1 px-1 py-0.5 rounded text-[9px] font-mono font-semibold bg-slate-200 text-slate-800">ADMIN</span>' : ''}
           </td>
           <td class="py-2 px-3 font-mono text-slate-700">${u.email}</td>
           <td class="py-2 px-3 font-mono text-slate-500">${new Date(u.firstLoginAt).toLocaleString()}</td>
@@ -841,7 +832,7 @@
           email: email,
           name: name,
           picture: payload.picture || '',
-          role: isOwner ? 'VIP_OWNER' : 'USER'
+          role: isOwner ? 'ADMIN' : 'USER'
         };
         localStorage.setItem('zebar_user', JSON.stringify(currentUser));
 
@@ -853,11 +844,11 @@
             name: name,
             firstLoginAt: new Date().toISOString(),
             qrCount: 0,
-            role: isOwner ? 'VIP_OWNER' : 'USER'
+            role: isOwner ? 'ADMIN' : 'USER'
           };
           registeredUsers.unshift(u);
         } else {
-          u.role = isOwner ? 'VIP_OWNER' : 'USER';
+          u.role = isOwner ? 'ADMIN' : 'USER';
         }
         localStorage.setItem('zebar_registered_users', JSON.stringify(registeredUsers));
 
