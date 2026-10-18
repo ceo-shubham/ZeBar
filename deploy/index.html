@@ -3,32 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZeBar - QR Code Generator & Media Hosting | by ZENSTRO</title>
-  <meta name="description" content="Generate and host custom QR codes for web links, plain text, MP3 audio, and images. Backed by private cloud storage with center logo embedding and zero ads." />
+  <title>ZeBar | QR Code Studio by ZENSTRO</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            surface: {
-              DEFAULT: '#ffffff',
-              subtle: '#f8fafc',
-              muted: '#f1f5f9',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
   <!-- Lucide Icons & QRCode Library -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -38,461 +20,323 @@
       color: #0f172a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
+    .barcode-lines {
+      display: inline-flex;
+      align-items: stretch;
+      height: 22px;
+      gap: 2px;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-white text-slate-900 antialiased selection:bg-slate-200">
 
   <!-- ============================================================== -->
-  <!-- NAVIGATION -->
+  <!-- NAVBAR -->
   <!-- ============================================================== -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
       
-      <!-- Typographic Brand -->
-      <a href="#" onclick="showView('home')" class="flex items-center gap-3 select-none">
-        <div class="w-8 h-8 bg-slate-900 text-white rounded-md flex items-center justify-center font-bold text-sm tracking-tight">
-          Z
+      <!-- Typographic Barcode Brand (NO BOX) -->
+      <a href="#" onclick="showView('studio')" class="flex items-center gap-2.5 select-none cursor-pointer">
+        <!-- Pure Barcode Stripes -->
+        <div class="barcode-lines text-slate-900" aria-hidden="true">
+          <span class="w-[3px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[4px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[2px] bg-slate-900"></span>
+          <span class="w-[5px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[3px] bg-slate-900"></span>
+          <span class="w-[2px] bg-slate-900"></span>
+          <span class="w-[4px] bg-slate-900"></span>
         </div>
-        <div class="flex flex-col">
-          <div class="flex items-baseline gap-1.5">
-            <span class="font-bold text-lg text-slate-900 tracking-tight leading-none">ZeBar</span>
-            <span class="text-[11px] font-mono font-medium text-slate-500 uppercase">Studio</span>
-          </div>
-          <span class="text-[10px] text-slate-500 leading-tight">by <strong class="text-slate-800">ZENSTRO</strong></span>
+        <div class="flex items-baseline gap-1.5">
+          <span class="font-mono text-xl font-extrabold tracking-wider text-slate-900">ZeBar</span>
+          <span class="text-[10px] font-mono text-slate-500">by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="hover:underline text-slate-700">ZENSTRO</a></span>
         </div>
       </a>
 
-      <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center gap-1">
-        <button onclick="showView('home')" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-          Home
+      <!-- Quick Nav -->
+      <nav class="flex items-center gap-2 sm:gap-3">
+        <button onclick="showView('studio')" class="px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
+          Studio
         </button>
-        <button onclick="showView('studio')" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-          QR Studio
-        </button>
-        <button onclick="showView('dashboard')" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+        <button onclick="showView('dashboard')" class="px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
           History
         </button>
-        <button onclick="showView('terms')" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+        <a href="/terms" class="hidden sm:inline-block px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
           Terms
-        </button>
-        <button onclick="showView('privacy')" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-          Privacy
-        </button>
-        <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors inline-flex items-center gap-1">
-          <span>zenstro.space</span>
-          <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
         </a>
-      </nav>
+        <a href="/privacy" class="hidden sm:inline-block px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded">
+          Privacy
+        </a>
 
-      <!-- Account / VIP Actions -->
-      <div class="flex items-center gap-2">
-        <!-- VIP Button (visible only when CEO is logged in) -->
-        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 transition-colors">
+        <!-- VIP Button (for CEO) -->
+        <button id="vip-nav-btn" onclick="showView('vip')" class="hidden items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 rounded hover:bg-amber-100">
           <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-700"></i>
           <span>VIP Panel</span>
         </button>
 
+        <!-- Auth Button -->
         <div id="auth-container">
-          <button onclick="openLoginModal()" class="px-4 py-2 rounded-md text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white shadow-sm flex items-center gap-1.5 transition-colors">
+          <button onclick="openLoginModal()" class="px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span>Sign In</span>
           </button>
         </div>
-      </div>
+      </nav>
 
     </div>
   </header>
 
   <!-- ============================================================== -->
-  <!-- MAIN CONTAINER -->
+  <!-- MAIN WORKSPACE -->
   <!-- ============================================================== -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10">
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
-    <!-- VIEW 1: HOME -->
-    <section id="view-home" class="space-y-12">
-      <!-- Direct Functional Hero -->
-      <div class="text-center max-w-3xl mx-auto pt-6 pb-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 mb-6">
-          <span>Official product of</span>
-          <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-900 hover:underline">ZENSTRO</a>
-          <span class="text-slate-400">•</span>
-          <span>Founder & CEO Shubham Pathak</span>
-        </div>
-
-        <h1 class="text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
-          QR Code Generator & Media Hosting
-        </h1>
-
-        <p class="mt-4 text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Create custom QR codes for web links, plain text, MP3 audio, and images. Upload your center brand logo with high error correction and host files on private cloud storage with zero advertisements.
-        </p>
-
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <button onclick="showView('studio')" class="px-6 py-2.5 rounded-md font-medium text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-sm flex items-center gap-2 transition-colors">
-            <span>Open QR Studio</span>
-            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
-          <button onclick="showView('terms')" class="px-5 py-2.5 rounded-md font-medium text-xs sm:text-sm bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 transition-colors">
-            Terms & Safety Policy
-          </button>
-        </div>
-
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 font-medium">
-          <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-slate-900"></i> Zero Advertisements</span>
-          <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-slate-900"></i> MP3 & Image Hosting</span>
-          <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-slate-900"></i> Center Logo Embedding</span>
-        </div>
-      </div>
-
-      <!-- Feature Grid (3 Clean White Cards) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-        <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-          <div class="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center mb-4">
-            <i data-lucide="music" class="w-4 h-4"></i>
-          </div>
-          <h2 class="text-sm font-semibold text-slate-900 mb-1.5">MP3 Audio QR Codes</h2>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Upload voice notes, audio guides, or music files. Scanners are directed to a clean, hosted audio player.
-          </p>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-          <div class="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center mb-4">
-            <i data-lucide="image" class="w-4 h-4"></i>
-          </div>
-          <h2 class="text-sm font-semibold text-slate-900 mb-1.5">Images & Flyers</h2>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Host high-resolution restaurant menus, posters, and documents with instant viewer presentation.
-          </p>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-          <div class="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center mb-4">
-            <i data-lucide="qr-code" class="w-4 h-4"></i>
-          </div>
-          <h2 class="text-sm font-semibold text-slate-900 mb-1.5">Center Brand Logo</h2>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Embed your company logo in the center of the code with 30% Level H Error Correction for reliable scanning.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 2: QR STUDIO -->
-    <section id="view-studio" class="hidden space-y-6">
-      <div class="border-b border-slate-200 pb-4">
-        <h2 class="text-xl font-bold text-slate-900">QR Code Studio</h2>
-        <p class="text-xs text-slate-500 mt-1">Configure your content type, customize pattern colors, and embed a center logo.</p>
-      </div>
-
-      <div class="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 shadow-sm">
-        <!-- Content Type Tabs -->
-        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-4">
-          <button onclick="setTab('url')" id="tab-url" class="px-4 py-2 rounded-md text-xs font-semibold bg-slate-900 text-white flex items-center gap-1.5 transition-colors">
-            <i data-lucide="link" class="w-3.5 h-3.5"></i>
-            <span>Web Link</span>
-          </button>
-          <button onclick="setTab('text')" id="tab-text" class="px-4 py-2 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors">
-            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-            <span>Plain Text</span>
-          </button>
-          <button onclick="setTab('mp3')" id="tab-mp3" class="px-4 py-2 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors">
-            <i data-lucide="music" class="w-3.5 h-3.5"></i>
-            <span>MP3 Audio</span>
-          </button>
-          <button onclick="setTab('image')" id="tab-image" class="px-4 py-2 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors">
-            <i data-lucide="image" class="w-3.5 h-3.5"></i>
-            <span>Image File</span>
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <!-- Inputs Column -->
-          <div class="lg:col-span-7 space-y-5">
-            <!-- Title -->
-            <div>
-              <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">QR Title / Label *</label>
-              <input type="text" id="qr-title" placeholder="e.g. Company Website" value="ZeBar QR" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900" />
-            </div>
-
-            <!-- Tab: URL -->
-            <div id="input-group-url">
-              <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Destination URL *</label>
-              <input type="url" id="qr-url" placeholder="https://example.com" value="https://zenstro.space" oninput="renderQR()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900" />
-            </div>
-
-            <!-- Tab: Text -->
-            <div id="input-group-text" class="hidden">
-              <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Text Message Content *</label>
-              <textarea id="qr-text" rows="4" placeholder="Enter text message..." oninput="renderQR()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900">Welcome to ZeBar by ZENSTRO</textarea>
-            </div>
-
-            <!-- Tab: MP3 File Upload -->
-            <div id="input-group-mp3" class="hidden">
-              <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Audio File (Max 50MB) *</label>
-              <div class="border border-dashed border-slate-300 hover:border-slate-500 rounded-md p-6 text-center bg-slate-50 cursor-pointer" onclick="document.getElementById('file-mp3').click()">
-                <input type="file" id="file-mp3" accept="audio/*" onchange="handleFileUpload(event, 'mp3')" class="hidden" />
-                <div class="w-9 h-9 rounded-md bg-white border border-slate-200 text-slate-800 mx-auto flex items-center justify-center mb-2">
-                  <i data-lucide="music" class="w-4 h-4"></i>
-                </div>
-                <p id="label-mp3" class="text-xs font-semibold text-slate-800">Select MP3 audio file to upload</p>
-                <p class="text-[11px] text-slate-500 mt-0.5">MP3, WAV, AAC, M4A up to 50MB</p>
-              </div>
-            </div>
-
-            <!-- Tab: Image File Upload -->
-            <div id="input-group-image" class="hidden">
-              <label class="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Image File (Max 25MB) *</label>
-              <div class="border border-dashed border-slate-300 hover:border-slate-500 rounded-md p-6 text-center bg-slate-50 cursor-pointer" onclick="document.getElementById('file-image').click()">
-                <input type="file" id="file-image" accept="image/*" onchange="handleFileUpload(event, 'image')" class="hidden" />
-                <div class="w-9 h-9 rounded-md bg-white border border-slate-200 text-slate-800 mx-auto flex items-center justify-center mb-2">
-                  <i data-lucide="image" class="w-4 h-4"></i>
-                </div>
-                <p id="label-image" class="text-xs font-semibold text-slate-800">Select image file to upload</p>
-                <p class="text-[11px] text-slate-500 mt-0.5">PNG, JPG, WEBP up to 25MB</p>
-              </div>
-            </div>
-
-            <!-- Center Logo Upload -->
-            <div class="pt-4 border-t border-slate-200">
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-xs font-semibold uppercase text-slate-700 flex items-center gap-1.5">
-                  <i data-lucide="upload" class="w-3.5 h-3.5 text-slate-600"></i>
-                  <span>Center Brand Logo (Optional)</span>
-                </label>
-                <button type="button" id="btn-remove-logo" onclick="removeCenterLogo()" class="hidden text-xs text-red-600 hover:underline">Remove</button>
-              </div>
-              <div class="flex items-center gap-3">
-                <input type="file" id="file-center-logo" accept="image/*" onchange="handleCenterLogo(event)" class="hidden" />
-                <button type="button" onclick="document.getElementById('file-center-logo').click()" class="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded-md text-slate-800 flex items-center gap-2">
-                  <i data-lucide="image-plus" class="w-3.5 h-3.5 text-slate-600"></i>
-                  <span id="center-logo-text">Upload Logo</span>
-                </button>
-                <span id="center-logo-name" class="text-xs font-mono text-slate-600 truncate max-w-[200px]"></span>
-              </div>
-            </div>
-
-            <!-- Colors -->
-            <div class="pt-4 border-t border-slate-200 grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Pattern Color</label>
-                <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-200">
-                  <input type="color" id="qr-fg" value="#0f172a" onchange="renderQR()" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0" />
-                  <span id="qr-fg-label" class="text-xs font-mono text-slate-700">#0f172a</span>
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Background Color</label>
-                <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-md border border-slate-200">
-                  <input type="color" id="qr-bg" value="#ffffff" onchange="renderQR()" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0" />
-                  <span id="qr-bg-label" class="text-xs font-mono text-slate-700">#ffffff</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Preview & Download Column -->
-          <div class="lg:col-span-5 flex flex-col items-center">
-            <div class="w-full bg-slate-50 border border-slate-200 rounded-lg p-6 flex flex-col items-center">
-              <span class="text-[11px] font-mono font-semibold uppercase text-slate-600 bg-white border border-slate-200 px-2.5 py-0.5 rounded-md mb-4">
-                High-Resolution Preview
-              </span>
-
-              <!-- Canvas Container -->
-              <div class="p-4 bg-white border border-slate-200 rounded-md shadow-sm flex items-center justify-center">
-                <canvas id="qr-canvas" class="max-w-[240px] h-auto"></canvas>
-              </div>
-
-              <!-- Encoded Target Display -->
-              <div class="w-full mt-4 p-2.5 bg-white border border-slate-200 rounded-md text-center">
-                <p class="text-[10px] text-slate-500 font-mono uppercase">Target Content</p>
-                <p id="qr-target-preview" class="text-xs font-mono text-slate-900 truncate max-w-[240px] mx-auto mt-0.5">https://zenstro.space</p>
-              </div>
-
-              <!-- Download & Save Buttons -->
-              <div class="w-full grid grid-cols-2 gap-2 mt-4">
-                <button type="button" onclick="downloadPNG()" class="py-2 px-3 bg-white hover:bg-slate-100 border border-slate-300 text-xs font-medium rounded-md text-slate-800 flex items-center justify-center gap-1.5 transition-colors">
-                  <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
-                  <span>Download PNG</span>
-                </button>
-                <button type="button" onclick="downloadSVG()" class="py-2 px-3 bg-white hover:bg-slate-100 border border-slate-300 text-xs font-medium rounded-md text-slate-800 flex items-center justify-center gap-1.5 transition-colors">
-                  <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
-                  <span>Download SVG</span>
-                </button>
-              </div>
-
-              <button type="button" onclick="saveToDashboard()" class="w-full mt-2.5 py-2.5 rounded-md font-medium text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-sm flex items-center justify-center gap-1.5 transition-colors">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                <span>Save to History</span>
-              </button>
-
-              <p class="text-[11px] text-slate-500 text-center mt-3 leading-tight">
-                All records are retained on secure infrastructure for anti-abuse safety compliance.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 3: USER DASHBOARD & HISTORY -->
-    <section id="view-dashboard" class="hidden space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+    <!-- VIEW 1: QR STUDIO (Front & Center) -->
+    <section id="view-studio" class="space-y-6">
+      
+      <!-- Studio Header -->
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">QR Code History</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Access, download, and manage your generated QR codes.</p>
+          <h1 class="text-lg font-bold text-slate-900">QR Code Studio</h1>
+          <p class="text-xs text-slate-500">Generate camera-ready QR codes for links, text, audio, and images.</p>
         </div>
-        <button onclick="showView('studio')" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors">
+      </div>
+
+      <!-- Studio Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Controls Column -->
+        <div class="lg:col-span-7 bg-white border border-slate-200 rounded p-5 space-y-5">
+          
+          <!-- Content Type Selector -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Content Type</label>
+            <div class="grid grid-cols-4 gap-1.5 bg-slate-100 p-1 rounded">
+              <button onclick="setTab('url')" id="tab-url" class="py-1.5 px-2 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                <span>Link</span>
+              </button>
+              <button onclick="setTab('text')" id="tab-text" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span>Text</span>
+              </button>
+              <button onclick="setTab('mp3')" id="tab-mp3" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+                <i data-lucide="music" class="w-3.5 h-3.5"></i>
+                <span>MP3</span>
+              </button>
+              <button onclick="setTab('image')" id="tab-image" class="py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1">
+                <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                <span>Image</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Label -->
+          <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1">Title / Label</label>
+            <input type="text" id="qr-title" placeholder="e.g. My Website" value="ZeBar QR" class="w-full px-3 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
+          </div>
+
+          <!-- Tab: URL -->
+          <div id="input-group-url">
+            <label class="block text-xs font-medium text-slate-700 mb-1">Destination URL</label>
+            <input type="url" id="qr-url" placeholder="https://example.com" value="https://zenstro.space" oninput="renderQR()" class="w-full px-3 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
+          </div>
+
+          <!-- Tab: Text -->
+          <div id="input-group-text" class="hidden">
+            <label class="block text-xs font-medium text-slate-700 mb-1">Text Content</label>
+            <textarea id="qr-text" rows="3" placeholder="Enter message..." oninput="renderQR()" class="w-full px-3 py-1.5 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900">Welcome to ZeBar by ZENSTRO</textarea>
+          </div>
+
+          <!-- Tab: MP3 Upload -->
+          <div id="input-group-mp3" class="hidden">
+            <label class="block text-xs font-medium text-slate-700 mb-1">Audio File (MP3, WAV, AAC)</label>
+            <div class="border border-dashed border-slate-300 hover:border-slate-500 rounded p-4 text-center bg-slate-50 cursor-pointer" onclick="document.getElementById('file-mp3').click()">
+              <input type="file" id="file-mp3" accept="audio/*" onchange="handleFileUpload(event, 'mp3')" class="hidden" />
+              <p id="label-mp3" class="text-xs font-medium text-slate-800">Select MP3 audio to upload</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Stored securely on private cloud storage (Max 50MB)</p>
+            </div>
+          </div>
+
+          <!-- Tab: Image Upload -->
+          <div id="input-group-image" class="hidden">
+            <label class="block text-xs font-medium text-slate-700 mb-1">Image File (PNG, JPG, WEBP)</label>
+            <div class="border border-dashed border-slate-300 hover:border-slate-500 rounded p-4 text-center bg-slate-50 cursor-pointer" onclick="document.getElementById('file-image').click()">
+              <input type="file" id="file-image" accept="image/*" onchange="handleFileUpload(event, 'image')" class="hidden" />
+              <p id="label-image" class="text-xs font-medium text-slate-800">Select image file to upload</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Stored securely on private cloud storage (Max 25MB)</p>
+            </div>
+          </div>
+
+          <!-- Center Logo Section (MANDATORY LOGIN) -->
+          <div class="pt-4 border-t border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-800">Center Brand Logo</label>
+              <button type="button" id="btn-remove-logo" onclick="removeCenterLogo()" class="hidden text-xs text-red-600 hover:underline">Remove logo</button>
+            </div>
+
+            <!-- Notice: Login Mandatory for Logo -->
+            <div id="logo-auth-notice" class="p-2.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-start gap-2">
+              <i data-lucide="lock" class="w-4 h-4 text-amber-700 shrink-0 mt-0.5"></i>
+              <div>
+                <span class="font-semibold">Login is mandatory to add a logo.</span>
+                <p class="text-[11px] text-amber-800 mt-0.5">Sign in with Google to upload and embed your brand logo into the center of the QR code.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <input type="file" id="file-center-logo" accept="image/*" onchange="handleCenterLogo(event)" class="hidden" />
+              <button type="button" id="btn-upload-logo" onclick="triggerLogoUpload()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium rounded flex items-center gap-1.5">
+                <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
+                <span id="center-logo-btn-text">Upload Logo</span>
+              </button>
+              <span id="center-logo-name" class="text-xs font-mono text-slate-600 truncate max-w-[200px]"></span>
+            </div>
+          </div>
+
+          <!-- Color Customization -->
+          <div class="pt-4 border-t border-slate-200 grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Pattern Color</label>
+              <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded border border-slate-200">
+                <input type="color" id="qr-fg" value="#0f172a" onchange="renderQR()" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" />
+                <span id="qr-fg-label" class="text-xs font-mono text-slate-700">#0f172a</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Background Color</label>
+              <div class="flex items-center gap-2 bg-slate-50 p-1.5 rounded border border-slate-200">
+                <input type="color" id="qr-bg" value="#ffffff" onchange="renderQR()" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" />
+                <span id="qr-bg-label" class="text-xs font-mono text-slate-700">#ffffff</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Preview Column -->
+        <div class="lg:col-span-5 bg-white border border-slate-200 rounded p-5 flex flex-col items-center">
+          <div class="text-[11px] font-mono font-medium uppercase text-slate-500 mb-3">Live Preview</div>
+
+          <!-- Canvas -->
+          <div class="p-3 bg-white border border-slate-200 rounded shadow-sm flex items-center justify-center">
+            <canvas id="qr-canvas" class="max-w-[240px] h-auto"></canvas>
+          </div>
+
+          <!-- Target preview -->
+          <div class="w-full mt-3 p-2 bg-slate-50 border border-slate-200 rounded text-center">
+            <p class="text-[10px] text-slate-500 font-mono uppercase">Target Destination</p>
+            <p id="qr-target-preview" class="text-xs font-mono text-slate-900 truncate max-w-[240px] mx-auto mt-0.5">https://zenstro.space</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="w-full grid grid-cols-2 gap-2 mt-4">
+            <button type="button" onclick="downloadPNG()" class="py-2 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
+              <span>Download PNG</span>
+            </button>
+            <button type="button" onclick="downloadSVG()" class="py-2 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-xs font-medium rounded text-slate-800 flex items-center justify-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
+              <span>Download SVG</span>
+            </button>
+          </div>
+
+          <button type="button" onclick="saveToDashboard()" class="w-full mt-2 py-2 rounded font-medium text-xs bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-1.5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+            <span>Save to History</span>
+          </button>
+
+          <p class="text-[10px] text-slate-400 text-center mt-3">
+            Ad-free platform. Records retained securely for safety compliance.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- VIEW 2: HISTORY / DASHBOARD -->
+    <section id="view-dashboard" class="hidden space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">QR Code History</h2>
+          <p class="text-xs text-slate-500">Your saved QR codes.</p>
+        </div>
+        <button onclick="showView('studio')" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-medium flex items-center gap-1">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           <span>Create QR</span>
         </button>
       </div>
 
-      <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Dynamically rendered QR Cards -->
+      <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered items -->
       </div>
     </section>
 
-    <!-- VIEW 4: VIP EXECUTIVE PANEL -->
+    <!-- VIEW 3: VIP AUDIT PANEL (EXCLUSIVELY CEO) -->
     <section id="view-vip" class="hidden space-y-6">
-      <!-- VIP Header -->
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-100 border border-amber-200 text-amber-900 mb-2">
-              <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-800"></i>
-              <span>EXECUTIVE AUDIT PANEL</span>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-900">Welcome, Shubham Pathak</h2>
-            <p class="text-xs text-slate-600 mt-1">Supervisory audit for first-time user logins, creation histories, and safety records.</p>
-          </div>
-          <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-medium rounded-md text-xs flex items-center gap-1.5 shrink-0">
-            <span>zenstro.space</span>
-            <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
-          </a>
+      <div class="bg-slate-50 border border-slate-200 rounded p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200 mb-1">EXECUTIVE AUDIT</span>
+          <h2 class="text-xl font-bold text-slate-900">Welcome, Shubham Pathak</h2>
+          <p class="text-xs text-slate-600">Audit user first-time logins and inspect creation histories.</p>
+        </div>
+        <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-medium rounded text-xs flex items-center gap-1 self-start sm:self-auto">
+          <span>zenstro.space</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-slate-500"></i>
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white border border-slate-200 rounded p-3">
+          <p class="text-xs text-slate-500">Users</p>
+          <p id="vip-stat-users" class="text-xl font-bold text-slate-900 mt-0.5">1</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded p-3">
+          <p class="text-xs text-slate-500">Total QRs</p>
+          <p id="vip-stat-qrs" class="text-xl font-bold text-slate-900 mt-0.5">0</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded p-3">
+          <p class="text-xs text-slate-500">Storage</p>
+          <p class="text-sm font-bold text-slate-900 mt-1 truncate">Backblaze B2</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded p-3">
+          <p class="text-xs text-slate-500">Ads</p>
+          <p class="text-xl font-bold text-slate-900 mt-0.5">0</p>
         </div>
       </div>
 
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white border border-slate-200 rounded-lg p-4">
-          <p class="text-xs font-medium text-slate-500">Registered Accounts</p>
-          <p id="vip-stat-users" class="text-2xl font-bold text-slate-900 mt-1">1</p>
-          <span class="text-[10px] text-slate-500 font-mono">Logged-in users</span>
-        </div>
-        <div class="bg-white border border-slate-200 rounded-lg p-4">
-          <p class="text-xs font-medium text-slate-500">Platform QR Codes</p>
-          <p id="vip-stat-qrs" class="text-2xl font-bold text-slate-900 mt-1">0</p>
-          <span class="text-[10px] text-slate-500 font-mono">Saved records</span>
-        </div>
-        <div class="bg-white border border-slate-200 rounded-lg p-4">
-          <p class="text-xs font-medium text-slate-500">Cloud Storage</p>
-          <p class="text-lg font-bold text-slate-900 mt-1">Backblaze B2</p>
-          <span class="text-[10px] text-slate-500 font-mono">zebar-storage</span>
-        </div>
-        <div class="bg-white border border-slate-200 rounded-lg p-4">
-          <p class="text-xs font-medium text-slate-500">Advertisements</p>
-          <p class="text-2xl font-bold text-slate-900 mt-1">0</p>
-          <span class="text-[10px] text-slate-500 font-mono">Ad-free platform</span>
-        </div>
-      </div>
-
-      <!-- User Search & Audit Table -->
-      <div class="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="users" class="w-4 h-4 text-slate-700"></i>
-              <span>User Registry & First-Time Login Feed</span>
-            </h3>
-            <p class="text-xs text-slate-500 mt-0.5">Audit log showing user names, emails, and initial login timestamps.</p>
-          </div>
-          <!-- Search Bar -->
-          <div class="relative sm:w-80">
-            <input type="text" id="vip-search-input" oninput="filterVipUsers()" placeholder="Search user by email..." class="w-full px-3 py-1.5 pl-8 bg-white border border-slate-300 rounded-md text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900" />
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2"></i>
+      <!-- Users Feed & Search -->
+      <div class="bg-white border border-slate-200 rounded p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 class="text-sm font-bold text-slate-900">User Registry & First-Time Login Feed</h3>
+          <div class="relative sm:w-72">
+            <input type="text" id="vip-search-input" oninput="filterVipUsers()" placeholder="Search user email..." class="w-full px-3 py-1 pl-8 bg-white border border-slate-300 rounded text-xs text-slate-900 focus:outline-none focus:border-slate-900" />
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1.5"></i>
           </div>
         </div>
 
-        <div class="overflow-x-auto rounded-md border border-slate-200">
+        <div class="overflow-x-auto rounded border border-slate-200">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider border-b border-slate-200">
+            <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
-                <th class="py-2.5 px-3">Name</th>
-                <th class="py-2.5 px-3">Email Address</th>
-                <th class="py-2.5 px-3">First Login Date</th>
-                <th class="py-2.5 px-3 text-center">QRs Generated</th>
-                <th class="py-2.5 px-3 text-right">Audit</th>
+                <th class="py-2 px-3">User</th>
+                <th class="py-2 px-3">Email Address</th>
+                <th class="py-2 px-3">First Login Date</th>
+                <th class="py-2 px-3 text-center">QRs</th>
+                <th class="py-2 px-3 text-right">Audit</th>
               </tr>
             </thead>
             <tbody id="vip-users-table" class="divide-y divide-slate-100">
-              <!-- Dynamically populated rows -->
+              <!-- Dynamically rendered -->
             </tbody>
           </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 5: TERMS & CONDITIONS -->
-    <section id="view-terms" class="hidden max-w-3xl mx-auto space-y-8">
-      <div class="border-b border-slate-200 pb-4">
-        <div class="inline-block px-2.5 py-1 text-xs font-medium bg-slate-100 border border-slate-200 rounded text-slate-700 mb-2">
-          Terms of Service
-        </div>
-        <h2 class="text-2xl font-bold text-slate-900">Terms & Conditions</h2>
-        <p class="text-xs text-slate-500 mt-1 font-mono">Last Updated: October 2026 | ZeBar by ZENSTRO</p>
-      </div>
-
-      <!-- MANDATORY SAFETY & ANTI-ABUSE DISCLOSURE BOX -->
-      <div class="border-2 border-slate-900 bg-slate-50 rounded-lg p-6 space-y-2">
-        <div class="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
-          <i data-lucide="shield-alert" class="w-4 h-4"></i>
-          <span>Mandatory Safety and Content Retention Disclosure</span>
-        </div>
-        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
-          Please be advised that <strong>all QR code generation history, destination URLs, and uploaded media files (MP3 audio, Images, Text) are permanently and securely recorded on our systems for safety and anti-abuse verification purposes</strong>. In the event of any security vulnerability, abusive content, malicious redirection report, or legal dispute, these records are reviewed by ZENSTRO management to preserve user security and comply with digital regulations.
-        </p>
-      </div>
-
-      <div class="space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">1. Company Entity</h3>
-          <p>ZeBar is owned and operated by <strong>ZENSTRO</strong> (<a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="text-slate-900 underline font-medium">zenstro.space</a>), directed by Founder & CEO <strong>Shubham Pathak</strong> (<span class="font-mono text-slate-900">ceo.shubhampathak@gmail.com</span>).</p>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">2. Authentication Requirements</h3>
-          <p>Public users may test basic functions. Generating permanent QR codes, uploading MP3 or image media, and storing dashboard records requires Google OAuth authentication.</p>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">3. Zero Advertisements</h3>
-          <p>ZeBar operates completely ad-free. No third-party advertisements or tracking scripts are added to your QR destinations.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 6: PRIVACY POLICY -->
-    <section id="view-privacy" class="hidden max-w-3xl mx-auto space-y-8">
-      <div class="border-b border-slate-200 pb-4">
-        <div class="inline-block px-2.5 py-1 text-xs font-medium bg-slate-100 border border-slate-200 rounded text-slate-700 mb-2">
-          Compliance
-        </div>
-        <h2 class="text-2xl font-bold text-slate-900">Privacy Policy</h2>
-        <p class="text-xs text-slate-500 mt-1 font-mono">Effective Date: October 2026 | ZeBar by ZENSTRO</p>
-      </div>
-
-      <div class="space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">1. Information Collection</h3>
-          <p>When you authenticate using Google, we store your email address, display name, and login timestamp. Encoded QR content and uploaded media assets are retained in private cloud storage (Backblaze B2).</p>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">2. Zero Sale of Personal Data</h3>
-          <p>ZENSTRO does not sell, rent, monetize, or distribute user information, email lists, or uploaded media to third-party advertisers or brokers.</p>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold text-slate-900 mb-1">3. Contact</h3>
-          <p>Questions regarding data practices should be addressed to Shubham Pathak at <span class="font-mono text-slate-900">ceo.shubhampathak@gmail.com</span>.</p>
         </div>
       </div>
     </section>
@@ -503,20 +347,30 @@
   <!-- MODAL: SIGN IN -->
   <!-- ============================================================== -->
   <div id="modal-login" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 max-w-md w-full shadow-lg relative">
-      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 p-1">
+    <div class="bg-white border border-slate-200 rounded p-6 max-w-sm w-full shadow-lg relative">
+      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-800 p-1">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="text-center mb-6">
-        <div class="w-8 h-8 bg-slate-900 text-white rounded-md mx-auto flex items-center justify-center font-bold text-sm mb-3">
-          Z
+      <div class="text-center mb-5">
+        <!-- Barcode Brand in Modal -->
+        <div class="barcode-lines text-slate-900 mb-2" aria-hidden="true">
+          <span class="w-[3px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[4px] bg-slate-900"></span>
+          <span class="w-[1px] bg-slate-900"></span>
+          <span class="w-[2px] bg-slate-900"></span>
+          <span class="w-[5px] bg-slate-900"></span>
+          <span class="w-[2px] bg-slate-900"></span>
+          <span class="w-[3px] bg-slate-900"></span>
         </div>
-        <h3 class="text-lg font-bold text-slate-900">Sign In to ZeBar</h3>
-        <p class="text-xs text-slate-500 mt-1">Authenticate to save QR codes, upload media, and manage history.</p>
+        <h3 class="text-base font-bold text-slate-900">Sign In to ZeBar</h3>
+        <p id="login-modal-subtitle" class="text-xs text-slate-500 mt-1">
+          Google Login is mandatory to attach a custom logo and host media files.
+        </p>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-3">
         <!-- Google Sign-In Container -->
         <div id="g_id_onload"
              data-client_id="193810371236-fm17kuegjb2fgoquu08brnsqne4tsj85.apps.googleusercontent.com"
@@ -527,24 +381,24 @@
 
         <div class="relative py-1">
           <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
-          <div class="relative flex justify-center text-[10px] uppercase font-mono"><span class="bg-white px-2 text-slate-400">Administrative Login</span></div>
+          <div class="relative flex justify-center text-[10px] uppercase font-mono"><span class="bg-white px-2 text-slate-400">Quick Access</span></div>
         </div>
 
         <!-- 1-Click CEO Shubham Login -->
-        <button onclick="instantLogin('ceo.shubhampathak@gmail.com', 'Shubham Pathak')" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-md text-xs flex items-center justify-center gap-2 transition-colors">
+        <button onclick="instantLogin('ceo.shubhampathak@gmail.com', 'Shubham Pathak')" class="w-full py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded text-xs flex items-center justify-center gap-2">
           <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-300"></i>
           <span>Sign In as CEO (Shubham Pathak - VIP Owner)</span>
         </button>
 
         <!-- 1-Click Test User Login -->
-        <button onclick="instantLogin('creator@zenstro.space', 'Alex Creator')" class="w-full py-2 px-4 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-medium rounded-md text-xs flex items-center justify-center gap-1.5 transition-colors">
+        <button onclick="instantLogin('creator@zenstro.space', 'Alex Creator')" class="w-full py-1.5 px-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-medium rounded text-xs flex items-center justify-center gap-1.5">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-600"></i>
           <span>Sign In as Test User</span>
         </button>
       </div>
 
-      <p class="text-[11px] text-slate-500 text-center mt-6">
-        By signing in, you agree to our <a href="#" onclick="closeLoginModal(); showView('terms')" class="text-slate-900 underline font-medium">Terms</a> and <a href="#" onclick="closeLoginModal(); showView('privacy')" class="text-slate-900 underline font-medium">Privacy Policy</a>.
+      <p class="text-[10px] text-slate-400 text-center mt-4">
+        By signing in, you agree to our <a href="/terms" class="text-slate-700 underline">Terms</a> and <a href="/privacy" class="text-slate-700 underline">Privacy Policy</a>.
       </p>
     </div>
   </div>
@@ -552,16 +406,17 @@
   <!-- ============================================================== -->
   <!-- FOOTER -->
   <!-- ============================================================== -->
-  <footer class="bg-white border-t border-slate-200 text-slate-600 py-8 mt-16 text-xs">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <span class="font-bold text-slate-900">ZeBar</span> by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="text-slate-900 font-medium hover:underline">ZENSTRO</a>
-        <span class="text-slate-400">|</span> Founded & Directed by Shubham Pathak (<span class="font-mono text-slate-700">ceo.shubhampathak@gmail.com</span>)
+  <footer class="bg-white border-t border-slate-200 text-slate-500 py-6 text-xs">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-900">ZeBar</span>
+        <span>by <a href="https://zenstro.space" target="_blank" rel="noopener noreferrer" class="text-slate-800 hover:underline font-medium">ZENSTRO</a></span>
+        <span class="text-slate-300">|</span>
+        <span>Founder & CEO: Shubham Pathak (<span class="font-mono text-slate-700">ceo.shubhampathak@gmail.com</span>)</span>
       </div>
-      <div class="flex items-center gap-4 text-slate-500">
-        <button onclick="showView('terms')" class="hover:text-slate-900 transition-colors">Terms of Service</button>
-        <button onclick="showView('privacy')" class="hover:text-slate-900 transition-colors">Privacy Policy</button>
-        <a href="/terms" class="hover:text-slate-900 transition-colors">Legal Terms</a>
+      <div class="flex items-center gap-4">
+        <a href="/terms" class="hover:text-slate-900">Terms of Service</a>
+        <a href="/privacy" class="hover:text-slate-900">Privacy Policy</a>
         <span>© 2026 ZENSTRO. Zero Ads.</span>
       </div>
     </div>
@@ -580,9 +435,7 @@
 
     function initApp() {
       const storedUser = localStorage.getItem('zebar_user');
-      if (storedUser) {
-        currentUser = JSON.parse(storedUser);
-      }
+      if (storedUser) currentUser = JSON.parse(storedUser);
 
       const storedQRs = localStorage.getItem('zebar_qrs');
       userQRs = storedQRs ? JSON.parse(storedQRs) : [];
@@ -606,7 +459,7 @@
     }
 
     function showView(viewId) {
-      ['home', 'studio', 'dashboard', 'vip', 'terms', 'privacy'].forEach(v => {
+      ['studio', 'dashboard', 'vip'].forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.classList.add('hidden');
       });
@@ -629,10 +482,10 @@
         const btn = document.getElementById('tab-' + t);
         const inputGrp = document.getElementById('input-group-' + t);
         if (t === tab) {
-          btn.className = 'px-4 py-2 rounded-md text-xs font-semibold bg-slate-900 text-white flex items-center gap-1.5 transition-colors';
+          btn.className = 'py-1.5 px-2 rounded text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1';
           inputGrp.classList.remove('hidden');
         } else {
-          btn.className = 'px-4 py-2 rounded-md text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors';
+          btn.className = 'py-1.5 px-2 rounded text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1';
           inputGrp.classList.add('hidden');
         }
       });
@@ -682,7 +535,7 @@
 
             ctx.fillStyle = bg === 'transparent' ? '#ffffff' : bg;
             ctx.beginPath();
-            ctx.roundRect(x - 5, y - 5, size + 10, size + 10, 6);
+            ctx.roundRect(x - 4, y - 4, size + 8, size + 8, 4);
             ctx.fill();
             ctx.strokeStyle = fg;
             ctx.lineWidth = 1.5;
@@ -690,13 +543,50 @@
 
             ctx.save();
             ctx.beginPath();
-            ctx.roundRect(x, y, size, size, 4);
+            ctx.roundRect(x, y, size, size, 3);
             ctx.clip();
             ctx.drawImage(logo, x, y, size, size);
             ctx.restore();
           };
         }
       });
+    }
+
+    // Logo Upload Trigger with MANDATORY LOGIN check
+    function triggerLogoUpload() {
+      if (!currentUser) {
+        document.getElementById('login-modal-subtitle').innerText = 'Google Login is mandatory to attach a custom brand logo to your QR code.';
+        openLoginModal();
+        return;
+      }
+      document.getElementById('file-center-logo').click();
+    }
+
+    function handleCenterLogo(e) {
+      if (!currentUser) {
+        triggerLogoUpload();
+        return;
+      }
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('center-logo-name').innerText = file.name;
+      document.getElementById('btn-remove-logo').classList.remove('hidden');
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        centerLogoData = evt.target.result;
+        renderQR();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeCenterLogo() {
+      centerLogoData = null;
+      document.getElementById('center-logo-name').innerText = '';
+      document.getElementById('file-center-logo').value = '';
+      document.getElementById('btn-remove-logo').classList.add('hidden');
+      renderQR();
     }
 
     async function handleFileUpload(e, type) {
@@ -720,36 +610,13 @@
           label.innerText = `Uploaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`;
           renderQR();
         } else {
-          label.innerText = 'Upload failed: ' + (data.error || 'Server error');
+          label.innerText = 'Upload error: ' + (data.error || 'Server error');
         }
       } catch (err) {
-        label.innerText = 'Upload complete (Cached locally)';
+        label.innerText = 'Upload cached locally';
         uploadedMediaUrl = URL.createObjectURL(file);
         renderQR();
       }
-    }
-
-    function handleCenterLogo(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      document.getElementById('center-logo-name').innerText = file.name;
-      document.getElementById('btn-remove-logo').classList.remove('hidden');
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        centerLogoData = evt.target.result;
-        renderQR();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeCenterLogo() {
-      centerLogoData = null;
-      document.getElementById('center-logo-name').innerText = '';
-      document.getElementById('file-center-logo').value = '';
-      document.getElementById('btn-remove-logo').classList.add('hidden');
-      renderQR();
     }
 
     function downloadPNG() {
@@ -783,6 +650,7 @@
 
     function saveToDashboard() {
       if (!currentUser) {
+        document.getElementById('login-modal-subtitle').innerText = 'Google Login is mandatory to save QR codes to your history.';
         openLoginModal();
         return;
       }
@@ -822,35 +690,35 @@
 
       if (myQRs.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full text-center py-12 bg-slate-50 rounded-lg border border-slate-200">
-            <p class="text-sm font-semibold text-slate-800">No QR codes generated yet</p>
-            <p class="text-xs text-slate-500 mt-1">Generate your first QR code using the studio.</p>
-            <button onclick="showView('studio')" class="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-medium">Open QR Studio</button>
+          <div class="col-span-full text-center py-12 bg-slate-50 rounded border border-slate-200">
+            <p class="text-xs font-semibold text-slate-800">No QR codes saved yet</p>
+            <p class="text-[11px] text-slate-500 mt-1">Generate your first QR code in the studio.</p>
+            <button onclick="showView('studio')" class="mt-3 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-medium">Open Studio</button>
           </div>
         `;
         return;
       }
 
       grid.innerHTML = myQRs.map(item => `
-        <div class="bg-white rounded-lg p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="bg-white rounded p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">${item.type}</span>
-              <span class="text-[10px] font-mono text-slate-500">${new Date(item.createdAt).toLocaleDateString()}</span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">${item.type}</span>
+              <span class="text-[10px] font-mono text-slate-400">${new Date(item.createdAt).toLocaleDateString()}</span>
             </div>
-            <div class="flex items-center gap-3 mb-3">
-              <img src="${item.qrDataUrl}" alt="${item.title}" class="w-16 h-16 bg-white border border-slate-200 rounded p-1 shrink-0" />
+            <div class="flex items-center gap-3 mb-2">
+              <img src="${item.qrDataUrl}" alt="${item.title}" class="w-14 h-14 bg-white border border-slate-200 rounded p-1 shrink-0" />
               <div class="overflow-hidden">
-                <h4 class="text-sm font-semibold text-slate-900 truncate">${item.title}</h4>
-                <p class="text-[11px] font-mono text-slate-500 truncate mt-0.5">${item.content}</p>
+                <h4 class="text-xs font-semibold text-slate-900 truncate">${item.title}</h4>
+                <p class="text-[10px] font-mono text-slate-500 truncate mt-0.5">${item.content}</p>
               </div>
             </div>
           </div>
-          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-            <a href="${item.qrDataUrl}" download="${item.title}.png" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 text-xs flex items-center gap-1 font-medium">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i> PNG
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <a href="${item.qrDataUrl}" download="${item.title}.png" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 text-[11px] font-medium flex items-center gap-1">
+              <i data-lucide="download" class="w-3 h-3"></i> PNG
             </a>
-            <button onclick="deleteQR('${item.id}')" class="p-1.5 text-slate-400 hover:text-red-600 rounded text-xs">
+            <button onclick="deleteQR('${item.id}')" class="p-1 text-slate-400 hover:text-red-600 rounded">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -861,7 +729,7 @@
     }
 
     function deleteQR(id) {
-      if (!confirm('Are you sure you want to delete this QR code?')) return;
+      if (!confirm('Delete this QR code?')) return;
       userQRs = userQRs.filter(q => q.id !== id);
       localStorage.setItem('zebar_qrs', JSON.stringify(userQRs));
       renderDashboard();
@@ -878,15 +746,15 @@
       document.getElementById('vip-stat-qrs').innerText = userQRs.length;
 
       table.innerHTML = filtered.map(u => `
-        <tr class="hover:bg-slate-50 transition-colors">
-          <td class="py-2.5 px-3 font-medium text-slate-900">
-            ${u.name} ${u.role === 'VIP_OWNER' ? '<span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200">OWNER</span>' : ''}
+        <tr class="hover:bg-slate-50">
+          <td class="py-2 px-3 font-medium text-slate-900">
+            ${u.name} ${u.role === 'VIP_OWNER' ? '<span class="ml-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-200">OWNER</span>' : ''}
           </td>
-          <td class="py-2.5 px-3 font-mono text-slate-700">${u.email}</td>
-          <td class="py-2.5 px-3 font-mono text-slate-500">${new Date(u.firstLoginAt).toLocaleString()}</td>
-          <td class="py-2.5 px-3 text-center font-semibold text-slate-900">${u.qrCount || 0}</td>
-          <td class="py-2.5 px-3 text-right">
-            <button onclick="inspectUserHistory('${u.email}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-[11px] font-medium">
+          <td class="py-2 px-3 font-mono text-slate-700">${u.email}</td>
+          <td class="py-2 px-3 font-mono text-slate-500">${new Date(u.firstLoginAt).toLocaleString()}</td>
+          <td class="py-2 px-3 text-center font-semibold text-slate-900">${u.qrCount || 0}</td>
+          <td class="py-2 px-3 text-right">
+            <button onclick="inspectUserHistory('${u.email}')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-[10px] font-medium">
               View History
             </button>
           </td>
@@ -961,25 +829,26 @@
     function updateAuthUI() {
       const container = document.getElementById('auth-container');
       const vipNavBtn = document.getElementById('vip-nav-btn');
+      const logoNotice = document.getElementById('logo-auth-notice');
 
       if (currentUser) {
         const isOwner = currentUser.role === 'VIP_OWNER';
         if (isOwner) {
           vipNavBtn.classList.remove('hidden');
-          vipNavBtn.classList.add('flex');
+          vipNavBtn.classList.add('inline-flex');
         } else {
           vipNavBtn.classList.add('hidden');
         }
 
+        // Hide mandatory login notice if already logged in
+        if (logoNotice) logoNotice.classList.add('hidden');
+
         container.innerHTML = `
           <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
-            <div class="w-7 h-7 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-semibold">
+            <div class="w-6 h-6 rounded bg-slate-900 text-white flex items-center justify-center text-xs font-semibold">
               ${currentUser.name.charAt(0)}
             </div>
-            <div class="hidden sm:block text-left">
-              <p class="text-xs font-semibold text-slate-900 leading-none">${currentUser.name}</p>
-              <p class="text-[10px] text-slate-500 font-mono mt-0.5">${currentUser.email}</p>
-            </div>
+            <span class="text-xs font-medium text-slate-900 hidden sm:inline">${currentUser.name}</span>
             <button onclick="logout()" title="Logout" class="p-1 text-slate-400 hover:text-slate-800 rounded">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
             </button>
@@ -987,8 +856,10 @@
         `;
       } else {
         vipNavBtn.classList.add('hidden');
+        if (logoNotice) logoNotice.classList.remove('hidden');
+
         container.innerHTML = `
-          <button onclick="openLoginModal()" class="px-3.5 py-1.5 rounded-md text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white shadow-sm flex items-center gap-1.5 transition-colors">
+          <button onclick="openLoginModal()" class="px-3 py-1.5 rounded text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5">
             <i data-lucide="user" class="w-3.5 h-3.5"></i>
             <span>Sign In</span>
           </button>
@@ -1001,7 +872,7 @@
       currentUser = null;
       localStorage.removeItem('zebar_user');
       updateAuthUI();
-      showView('home');
+      showView('studio');
     }
 
     window.addEventListener('DOMContentLoaded', initApp);
